@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+	<head>
+		<title>JS delayed hover</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<h1>JS delayed hover</h1>
+		<p>Hover over gray box. When you move mouse quickly then it's not activated. When you move slower box get activated.</p>
+		<div id="testContainer" class="test-container"></div>
+		<script src="js-delayed-hover.js"></script>
+		<script>
+			var container = document.getElementById( 'testContainer' );
+			delayedHover(
+				container,
+				{
+					checkInterval: 100,
+					maxActivationDistance: 20,
+					onActivate: function () {
+						container.classList.add( 'active' );
+					},
+					onDeactivate: function() {
+						container.classList.remove( 'active' );
+					}
+				}
+			);
+		</script>
+	</body>
+</html>
