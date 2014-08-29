@@ -32,11 +32,6 @@
 	 */
 	utils = {
 		/**
-		 * Just simple one-time-defined function that will do nothing
-		 */
-		noop: function() {},
-
-		/**
 		 * Returns first object extended by the properties of the second
 		 * @param {Object} dst Object to be extended
 		 * @param {Object} src Object with properties that should be added to the previous
@@ -67,8 +62,8 @@
 		options = {
 			checkInterval: 100,
 			maxActivationDistance: 20,
-			onActivate: utils.noop,
-			onDeactivate: utils.noop
+			onActivate: Function.prototype,
+			onDeactivate: Function.prototype
 		};
 
 		/**
