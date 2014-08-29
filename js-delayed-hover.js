@@ -42,10 +42,10 @@
 		 * @param {Object} src Object with properties that should be added to the previous
 		 * @return {Object} Extended object
 		 */
-		extend: function(dst, src) {
+		extend: function( dst, src ) {
 			var p;
-			for (p in src) {
-				if (src.hasOwnProperty (p)) {
+			for ( p in src ) {
+				if (src.hasOwnProperty( p )) {
 					dst[p] = src[p];
 				}
 			}
@@ -57,7 +57,7 @@
 	 * Module core
 	 */
 	DelayedHoverModule = function() {
-		var getMoveDistance,
+		var getSquaredMoveDistance,
 			mouseEnterHandler, mouseLeaveHandler, mouseMoveHandler,
 			lastLocation, lastCheckedLocation, options, possiblyActivate, timeoutId;
 
@@ -72,20 +72,20 @@
 		};
 
 		/**
-		 * Calculate distance between
-		 * !Important: This is not a real distance, it's a sum of distances on both axes.
-		 * This solution was chosen to increase module performance.
+		 * Calculate squared distance between. We use squared values for better performance.
+		 * We don't need squared root when comparing to squared max distance.
 		 * @returns {number}
 		 */
-		getMoveDistance = function() {
-			return Math.abs( lastCheckedLocation.x - lastLocation.x ) + Math.abs( lastCheckedLocation.y - lastLocation.y );
+		getSquaredMoveDistance = function() {
+			return ( lastCheckedLocation.x - lastLocation.x ) * ( lastCheckedLocation.x - lastLocation.x ) +
+				( lastCheckedLocation.y - lastLocation.y ) * ( lastCheckedLocation.y - lastLocation.y );
 		}
 
 		/**
 		 * Function that checks mouse speed  activates callback when conditions are met
 		 */
 		possiblyActivate = function() {
-			if ( lastLocation && getMoveDistance() <= options.maxActivationDistance ) {
+			if ( lastLocation && getSquaredMoveDistance() <= options.maxSquaredActivationDistance ) {
 				options.onActivate();
 			} else {
 				timeoutId = setTimeout( possiblyActivate, options.checkInterval );
@@ -122,6 +122,7 @@
 		 */
 		this.init = function( elem, opts ) {
 			options = utils.extend(options, opts);
+			options.maxSquaredActivationDistance = options.maxActivationDistance * options.maxActivationDistance;
 
 			elem.addEventListener( 'click', options.onActivate );
 			elem.addEventListener( 'mouseenter', mouseEnterHandler );
