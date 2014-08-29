@@ -4,12 +4,13 @@
  *
  * Usage:
  *
- * 	var container = document.getElementById( 'testContainer' );
+ *	var container = document.getElementById( 'testContainer' );
  *	delayedHover(
  *		container, // HTML node element to watch
  *		{
  *			checkInterval: 100, // How often mouse speed is calculated
- *			maxActivationDistance: 20, // Breakpoint for activation, onActivate callback will be fired when mouse speed is below this value
+ *			maxActivationDistance: 20, // Breakpoint for activation,
+ *				// onActivate callback will be fired when mouse speed is below this value
  *			onActivate: function () { // Function to call when mouse speed meets required conditions
  *				container.classList.add( 'active' );
  *			},
@@ -25,6 +26,7 @@
  */
 
 (function() {
+	'use strict';
 	var utils, DelayedHoverModule;
 
 	/**
@@ -74,7 +76,7 @@
 		getSquaredMoveDistance = function() {
 			return ( lastCheckedLocation.x - lastLocation.x ) * ( lastCheckedLocation.x - lastLocation.x ) +
 				( lastCheckedLocation.y - lastLocation.y ) * ( lastCheckedLocation.y - lastLocation.y );
-		}
+		};
 
 		/**
 		 * Function that checks mouse speed  activates callback when conditions are met
@@ -125,8 +127,8 @@
 			elem.addEventListener( 'mousemove', mouseMoveHandler );
 
 			return this;
-		}
-	}
+		};
+	};
 
 
 	window.delayedHover = function( elem, options ) {
