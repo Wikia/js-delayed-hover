@@ -5,19 +5,19 @@
  * Usage:
  *
  * 	var container = document.getElementById( 'testContainer' );
- *		delayedHover(
- *			container, // HTML node element to watch
- *			{
- *				checkInterval: 100, // How often mouse speed is calculated
- *				maxActivationDistance: 20, // Breakpoint for activation, onActivate callback will be fired when mouse speed is below this value
- *				onActivate: function () { // Function to call when mouse speed meets required conditions
- *					container.classList.add( 'active' );
- *				},
- *				onDeactivate: function() { // Function to call when you stop hovering element
- *					container.classList.remove( 'active' );
- *				}
+ *	delayedHover(
+ *		container, // HTML node element to watch
+ *		{
+ *			checkInterval: 100, // How often mouse speed is calculated
+ *			maxActivationDistance: 20, // Breakpoint for activation, onActivate callback will be fired when mouse speed is below this value
+ *			onActivate: function () { // Function to call when mouse speed meets required conditions
+ *				container.classList.add( 'active' );
+ *			},
+ *			onDeactivate: function() { // Function to call when you stop hovering element
+ *				container.classList.remove( 'active' );
  *			}
- * );
+ *		}
+ *	);
  *
  * Copyright 2014 Wikia Inc.
  * Released under the MIT license
@@ -32,20 +32,15 @@
 	 */
 	utils = {
 		/**
-		 * Just simple one-time-defined function that will do nothing
-		 */
-		noop: function () {},
-
-		/**
 		 * Returns first object extended by the properties of the second
 		 * @param {Object} dst Object to be extended
 		 * @param {Object} src Object with properties that should be added to the previous
 		 * @return {Object} Extended object
 		 */
-		extend: function (dst, src) {
+		extend: function( dst, src ) {
 			var p;
-			for (p in src) {
-				if (src.hasOwnProperty (p)) {
+			for ( p in src ) {
+				if (src.hasOwnProperty( p )) {
 					dst[p] = src[p];
 				}
 			}
@@ -57,7 +52,9 @@
 	 * Module core
 	 */
 	DelayedHoverModule = function() {
-		var elem, getMoveDistance, mouseEnterHandler, mouseLeaveHandler, lastLocation, lastCheckedLocation, mouseMoveHandler, options, possiblyActivate, timeoutId;
+		var getSquaredMoveDistance,
+			mouseEnterHandler, mouseLeaveHandler, mouseMoveHandler,
+			lastLocation, lastCheckedLocation, options, possiblyActivate, timeoutId;
 
 		/**
 		 * Module options
@@ -65,28 +62,25 @@
 		options = {
 			checkInterval: 100,
 			maxActivationDistance: 20,
-			onActivate: function () {
-				elem.classList.add( 'active' );
-			},
-			onDeactivate: function() {
-				elem.classList.remove( 'active' );
-			}
+			onActivate: Function.prototype,
+			onDeactivate: Function.prototype
 		};
 
 		/**
-		 * Calculate distance between
-		 * !Important: This is not real distance is sum of distance on both axises
+		 * Calculate squared distance between locations. We use squared values for better performance.
+		 * We don't need squared root when comparing to squared max distance.
 		 * @returns {number}
 		 */
-		getMoveDistance = function( ) {
-			return Math.abs( lastCheckedLocation.x - lastLocation.x ) + Math.abs( lastCheckedLocation.y - lastLocation.y );
+		getSquaredMoveDistance = function() {
+			return ( lastCheckedLocation.x - lastLocation.x ) * ( lastCheckedLocation.x - lastLocation.x ) +
+				( lastCheckedLocation.y - lastLocation.y ) * ( lastCheckedLocation.y - lastLocation.y );
 		}
 
 		/**
 		 * Function that checks mouse speed  activates callback when conditions are met
 		 */
 		possiblyActivate = function() {
-			if ( lastLocation && getMoveDistance() <= options.maxActivationDistance ) {
+			if ( lastLocation && getSquaredMoveDistance() <= options.maxSquaredActivationDistance ) {
 				options.onActivate();
 			} else {
 				timeoutId = setTimeout( possiblyActivate, options.checkInterval );
@@ -121,13 +115,16 @@
 		/**
 		 * Prepare variable, hook handler
 		 */
-		this.init = function( el, opts ) {
-			elem = el;
+		this.init = function( elem, opts ) {
 			options = utils.extend(options, opts);
+			options.maxSquaredActivationDistance = options.maxActivationDistance * options.maxActivationDistance;
+
 			elem.addEventListener( 'click', options.onActivate );
 			elem.addEventListener( 'mouseenter', mouseEnterHandler );
 			elem.addEventListener( 'mouseleave', mouseLeaveHandler );
 			elem.addEventListener( 'mousemove', mouseMoveHandler );
+
+			return this;
 		}
 	}
 
