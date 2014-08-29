@@ -5,19 +5,19 @@
  * Usage:
  *
  * 	var container = document.getElementById( 'testContainer' );
- *		delayedHover(
- *			container, // HTML node element to watch
- *			{
- *				checkInterval: 100, // How often mouse speed is calculated
- *				maxActivationDistance: 20, // Breakpoint for activation, onActivate callback will be fired when mouse speed is below this value
- *				onActivate: function () { // Function to call when mouse speed meets required conditions
- *					container.classList.add( 'active' );
- *				},
- *				onDeactivate: function() { // Function to call when you stop hovering element
- *					container.classList.remove( 'active' );
- *				}
+ *	delayedHover(
+ *		container, // HTML node element to watch
+ *		{
+ *			checkInterval: 100, // How often mouse speed is calculated
+ *			maxActivationDistance: 20, // Breakpoint for activation, onActivate callback will be fired when mouse speed is below this value
+ *			onActivate: function () { // Function to call when mouse speed meets required conditions
+ *				container.classList.add( 'active' );
+ *			},
+ *			onDeactivate: function() { // Function to call when you stop hovering element
+ *				container.classList.remove( 'active' );
  *			}
- * );
+ *		}
+ *	);
  *
  * Copyright 2014 Wikia Inc.
  * Released under the MIT license
@@ -34,7 +34,7 @@
 		/**
 		 * Just simple one-time-defined function that will do nothing
 		 */
-		noop: function () {},
+		noop: function() {},
 
 		/**
 		 * Returns first object extended by the properties of the second
@@ -42,7 +42,7 @@
 		 * @param {Object} src Object with properties that should be added to the previous
 		 * @return {Object} Extended object
 		 */
-		extend: function (dst, src) {
+		extend: function(dst, src) {
 			var p;
 			for (p in src) {
 				if (src.hasOwnProperty (p)) {
@@ -57,7 +57,9 @@
 	 * Module core
 	 */
 	DelayedHoverModule = function() {
-		var elem, getMoveDistance, mouseEnterHandler, mouseLeaveHandler, lastLocation, lastCheckedLocation, mouseMoveHandler, options, possiblyActivate, timeoutId;
+		var getMoveDistance,
+			mouseEnterHandler, mouseLeaveHandler, mouseMoveHandler,
+			lastLocation, lastCheckedLocation, options, possiblyActivate, timeoutId;
 
 		/**
 		 * Module options
@@ -65,20 +67,17 @@
 		options = {
 			checkInterval: 100,
 			maxActivationDistance: 20,
-			onActivate: function () {
-				elem.classList.add( 'active' );
-			},
-			onDeactivate: function() {
-				elem.classList.remove( 'active' );
-			}
+			onActivate: utils.noop,
+			onDeactivate: utils.noop
 		};
 
 		/**
 		 * Calculate distance between
-		 * !Important: This is not real distance is sum of distance on both axises
+		 * !Important: This is not a real distance, it's a sum of distances on both axes.
+		 * This solution was chosen to increase module performance.
 		 * @returns {number}
 		 */
-		getMoveDistance = function( ) {
+		getMoveDistance = function() {
 			return Math.abs( lastCheckedLocation.x - lastLocation.x ) + Math.abs( lastCheckedLocation.y - lastLocation.y );
 		}
 
@@ -121,13 +120,15 @@
 		/**
 		 * Prepare variable, hook handler
 		 */
-		this.init = function( el, opts ) {
-			elem = el;
+		this.init = function( elem, opts ) {
 			options = utils.extend(options, opts);
+
 			elem.addEventListener( 'click', options.onActivate );
 			elem.addEventListener( 'mouseenter', mouseEnterHandler );
 			elem.addEventListener( 'mouseleave', mouseLeaveHandler );
 			elem.addEventListener( 'mousemove', mouseMoveHandler );
+
+			return this;
 		}
 	}
 
