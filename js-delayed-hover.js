@@ -72,7 +72,7 @@
 		};
 
 		/**
-		 * Calculate squared distance between. We use squared values for better performance.
+		 * Calculate squared distance between locations. We use squared values for better performance.
 		 * We don't need squared root when comparing to squared max distance.
 		 * @returns {number}
 		 */
