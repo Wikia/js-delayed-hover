@@ -87,6 +87,9 @@
 			if ( lastLocation && getSquaredMoveDistance() <= options.maxSquaredActivationDistance ) {
 				options.onActivate();
 			} else {
+				if ( timeoutId ) {
+					clearTimeout( timeoutId );
+				}
 				timeoutId = setTimeout( possiblyActivate, options.checkInterval );
 			}
 
