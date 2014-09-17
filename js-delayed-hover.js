@@ -16,7 +16,8 @@
  *			},
  *			onDeactivate: function() { // Function to call when you stop hovering element
  *				container.classList.remove( 'active' );
- *			}
+ *			},
+ *			activateOnClick: true // If onActivate should be called on click event
  *		}
  *	);
  *
@@ -65,7 +66,8 @@
 			checkInterval: 100,
 			maxActivationDistance: 20,
 			onActivate: Function.prototype,
-			onDeactivate: Function.prototype
+			onDeactivate: Function.prototype,
+			activateOnClick: true
 		};
 
 		/**
@@ -85,6 +87,9 @@
 			if ( lastLocation && getSquaredMoveDistance() <= options.maxSquaredActivationDistance ) {
 				options.onActivate();
 			} else {
+				if ( timeoutId ) {
+					clearTimeout( timeoutId );
+				}
 				timeoutId = setTimeout( possiblyActivate, options.checkInterval );
 			}
 
@@ -121,7 +126,9 @@
 			options = utils.extend(options, opts);
 			options.maxSquaredActivationDistance = options.maxActivationDistance * options.maxActivationDistance;
 
-			elem.addEventListener( 'click', options.onActivate );
+			if ( options.activateOnClick ) {
+				elem.addEventListener( 'click', options.onActivate );
+			}
 			elem.addEventListener( 'mouseenter', mouseEnterHandler );
 			elem.addEventListener( 'mouseleave', mouseLeaveHandler );
 			elem.addEventListener( 'mousemove', mouseMoveHandler );
